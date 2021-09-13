@@ -24,6 +24,22 @@ module.exports = class UserActivity {
         this._email = email;
     }
 
+    get name() {
+        return this._name || '';
+    }
+
+    set name(name) {
+        this._name = name;
+    }
+
+    get url() {
+        return this._url || '';
+    }
+
+    set url(url) {
+        this._url = url;
+    }
+
     get isActive() {
         return (this.commits + this.pullRequestComments + this.issueComments + this.issues) > 0;
     }
@@ -60,6 +76,8 @@ module.exports = class UserActivity {
             result = {
                 login: this.login,
                 email: this.email,
+                name: this.name,
+                url: this.url,
                 isActive: this.isActive
             };
 

@@ -42,6 +42,8 @@ module.exports = class OrganizationUserActivity {
       } else {
         const userData = new UserActivity(user.login);
         userData.email = user.email;
+        userData.url = user.url;
+        userData.name = user.name;
 
         userActivity[user.login] = userData
       }
