@@ -8,15 +8,18 @@ const fs = require('fs')
   , OrganizationActivity = require('./src/OrganizationUserActivity')
   , githubClient = require('./src/github/githubClient')
   , dateUtil = require('./src/dateUtil')
+  , minimist = require('minimist')
 ;
 
+var argv = minimist(process.argv.slice(2));
+
 async function run() {
-  const since = core.getInput('since')
-    , days = core.getInput('activity_days')
-    , token = getRequiredInput('token')
-    , outputDir = getRequiredInput('outputDir')
-    , organization = getRequiredInput('organization')
-    , maxRetries = getRequiredInput('octokit_max_retries')
+  const since = core.getInput('since') || argv.since
+    , days = core.getInput('activity_days') || argv.activitydays
+    , token = core.getInput('token') || argv.token || getRequiredInput('token')
+    , outputDir =  core.getInput('outputDir') || argv.outputDir || getRequiredInput('outputDir')
+    , organization = core.getInput('organization') || argv.organization || getRequiredInput('organization')
+    , maxRetries = core.getInput('octokit_max_retries') || argv.retries || getRequiredInput('octokit_max_retries')
   ;
 
   let fromDate;
@@ -50,6 +53,43 @@ async function run() {
 
   // Expose the output csv file
   core.setOutput('report_csv', file);
+
+  const fileHtml = path.join(outputDir, 'organization_user_activity.html');
+  
+  var html = "<html><body><h3>User report for " + organization + "</h3><p></p><table>";
+  html += "<tr>";
+  html += "<th>Login</th>";
+  html += "<th>Email</th>";
+  html += "<th>Name</th>";
+  html += "<th>Url</th>";
+  html += "<th>is active</th>";
+  html += "<th>commits</th>";
+  html += "<th>issues</th>";
+  html += "<th>issue comments</th>";
+  html += "<th>pr comments</th>";
+  html += "</tr>";
+
+  for(var i in data) {
+    var current = data[i];
+    html += "<tr>";
+    html += "<td>" + current.login + "</td>";
+    html += "<td>" + current.email + "</td>";
+    html += "<td>" + current.name + "</td>";
+    html += "<td><a href='" + current.url + "'>" + current.url + "</a></td>";
+    html += "<td>" + current.isActive + "</td>";
+    html += "<td>" + current.commits + "</td>";
+    html += "<td>" + current.issues + "</td>";
+    html += "<td>" + current.issueComments + "</td>";
+    html += "<td>" + current.prComments + "</td>";
+    html += "</tr>";
+  }
+  html += "</table></body></html>";
+
+  fs.writeFileSync(fileHtml, html);
+  console.log(`User Activity Report Generated: ${fileHtml}`);
+
+  // Expose the output csv file
+  core.setOutput('report_html', fileHtml);
 }
 
 async function execute() {

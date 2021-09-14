@@ -29,6 +29,11 @@ The GitHub Action will register the following outputs that can be referenced in 
 * `report_json`: The path to the file containing the JSON data used to generate the CSV report
 
 
+## New version
+npm run build
+git tag 1.3.0
+git push origin --tags
+
 ## Examples
 
 Invoke the action step providing the required parameters to analyze user activity over the last 30 days:
