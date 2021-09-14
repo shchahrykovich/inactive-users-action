@@ -30,6 +30,18 @@ inputs:
     required: true
     default: 15
 
+  emails:
+    description: Emails to send report to
+    required: false
+
+  sendgridtoken:
+    description: Send Grid API token
+    required: false
+
+  from:
+    description: From field for email
+    required: false
+
 runs:
   using: node12
   main: dist/index.js

@@ -9,6 +9,7 @@ const fs = require('fs')
   , githubClient = require('./src/github/githubClient')
   , dateUtil = require('./src/dateUtil')
   , minimist = require('minimist')
+  , sgMail = require('@sendgrid/mail')
 ;
 
 var argv = minimist(process.argv.slice(2));
@@ -20,6 +21,9 @@ async function run() {
     , outputDir =  core.getInput('outputDir') || argv.outputDir || getRequiredInput('outputDir')
     , organization = core.getInput('organization') || argv.organization || getRequiredInput('organization')
     , maxRetries = core.getInput('octokit_max_retries') || argv.retries || getRequiredInput('octokit_max_retries')
+    , emails = core.getInput('emails') || argv.emails
+    , from = core.getInput('from') || argv.from
+    , sendgridapitoken = core.getInput('sendgridapitoken') || argv.sendgridapitoken
   ;
 
   let fromDate;
@@ -90,6 +94,23 @@ async function run() {
 
   // Expose the output csv file
   core.setOutput('report_html', fileHtml);
+
+  if(emails) {
+    console.log(`Sending email report to ${emails}`);
+
+    const msg = {
+      to: emails,
+      from: from,
+      subject: 'GitHub user report',
+      html: html,
+    };
+  
+    sgMail.setApiKey(sendgridapitoken);
+    sgMail
+        .send(msg)
+        .then(() => console.log('Mail sent successfully'))
+        .catch(error => console.error(error.toString()));
+  }
 }
 
 async function execute() {
