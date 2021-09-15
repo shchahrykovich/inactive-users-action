@@ -10,9 +10,41 @@ const fs = require('fs')
   , dateUtil = require('./src/dateUtil')
   , minimist = require('minimist')
   , sgMail = require('@sendgrid/mail')
+  , htmlTemplate = require('./src/email')
 ;
 
 var argv = minimist(process.argv.slice(2));
+
+function generateHTML(organization, data) {
+  var html = "<h3>User report for " + organization + "</h3><p></p><table border='1' cellpadding='0' cellspacing='0' style='border-collapse: separate; mso-table-lspace: 0pt; mso-table-rspace: 0pt; width: 100%;'>";
+  html += "<tr>";
+  html += "<th>Login</th>";
+  html += "<th>Email</th>";
+  html += "<th>Name</th>";
+  html += "<th>Url</th>";
+  html += "<th>is active</th>";
+  html += "<th>commits</th>";
+  html += "<th>issues</th>";
+  html += "<th>issue comments</th>";
+  html += "<th>pr comments</th>";
+  html += "</tr>";
+
+  for(var i in data) {
+    var current = data[i];
+    html += "<tr>";
+    html += "<td>" + current.login + "</td>";
+    html += "<td>" + current.email + "</td>";
+    html += "<td>" + current.name + "</td>";
+    html += "<td><a href='" + current.url + "'>" + current.url + "</a></td>";
+    // html += "<td>" + current.isActive + "</td>";
+    // html += "<td>" + current.commits + "</td>";
+    // html += "<td>" + current.issues + "</td>";
+    // html += "<td>" + current.issueComments + "</td>";
+    // html += "<td>" + current.prComments + "</td>";
+    html += "</tr>";
+  }
+  return htmlTemplate.emailTemplate.replace("{BODY}", html);
+}
 
 async function run() {
   const since = core.getInput('since') || argv.since
@@ -60,34 +92,7 @@ async function run() {
 
   const fileHtml = path.join(outputDir, 'organization_user_activity.html');
   
-  var html = "<html><body><h3>User report for " + organization + "</h3><p></p><table>";
-  html += "<tr>";
-  html += "<th>Login</th>";
-  html += "<th>Email</th>";
-  html += "<th>Name</th>";
-  html += "<th>Url</th>";
-  html += "<th>is active</th>";
-  html += "<th>commits</th>";
-  html += "<th>issues</th>";
-  html += "<th>issue comments</th>";
-  html += "<th>pr comments</th>";
-  html += "</tr>";
-
-  for(var i in data) {
-    var current = data[i];
-    html += "<tr>";
-    html += "<td>" + current.login + "</td>";
-    html += "<td>" + current.email + "</td>";
-    html += "<td>" + current.name + "</td>";
-    html += "<td><a href='" + current.url + "'>" + current.url + "</a></td>";
-    html += "<td>" + current.isActive + "</td>";
-    html += "<td>" + current.commits + "</td>";
-    html += "<td>" + current.issues + "</td>";
-    html += "<td>" + current.issueComments + "</td>";
-    html += "<td>" + current.prComments + "</td>";
-    html += "</tr>";
-  }
-  html += "</table></body></html>";
+  var html = generateHTML(organization, data);
 
   fs.writeFileSync(fileHtml, html);
   console.log(`User Activity Report Generated: ${fileHtml}`);
