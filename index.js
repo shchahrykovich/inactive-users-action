@@ -22,11 +22,11 @@ function generateHTML(organization, data) {
   html += "<th>Email</th>";
   html += "<th>Name</th>";
   html += "<th>Url</th>";
-  html += "<th>is active</th>";
-  html += "<th>commits</th>";
-  html += "<th>issues</th>";
-  html += "<th>issue comments</th>";
-  html += "<th>pr comments</th>";
+  // html += "<th>is active</th>";
+  // html += "<th>commits</th>";
+  // html += "<th>issues</th>";
+  // html += "<th>issue comments</th>";
+  // html += "<th>pr comments</th>";
   html += "</tr>";
 
   for(var i in data) {
