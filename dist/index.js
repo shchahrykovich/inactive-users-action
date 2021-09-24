@@ -26,7 +26,7 @@ const fs = __webpack_require__(5747)
   , minimist = __webpack_require__(5871)
   , sgMail = __webpack_require__(6686)
   , htmlTemplate = __webpack_require__(628)
-;
+  ;
 
 var argv = minimist(process.argv.slice(2));
 
@@ -44,7 +44,12 @@ function generateHTML(organization, data) {
   // html += "<th>pr comments</th>";
   html += "</tr>";
 
-  for(var i in data) {
+  data.sort(function byLogin(a, b) {
+    return b.login.toLowerCase() < a.login.toLowerCase() ? 1
+      : b.login.toLowerCase() > a.login .toLowerCase()? -1
+        : 0;
+  });
+  for (var i in data) {
     var current = data[i];
     html += "<tr>";
     html += "<td>" + current.login + "</td>";
@@ -65,13 +70,13 @@ async function run() {
   const since = core.getInput('since') || argv.since
     , days = core.getInput('activity_days') || argv.activitydays
     , token = core.getInput('token') || argv.token || getRequiredInput('token')
-    , outputDir =  core.getInput('outputDir') || argv.outputDir || getRequiredInput('outputDir')
+    , outputDir = core.getInput('outputDir') || argv.outputDir || getRequiredInput('outputDir')
     , organization = core.getInput('organization') || argv.organization || getRequiredInput('organization')
     , maxRetries = core.getInput('octokit_max_retries') || argv.retries || getRequiredInput('octokit_max_retries')
     , emails = core.getInput('emails') || argv.emails
     , from = core.getInput('from') || argv.from
     , sendgridapitoken = core.getInput('sendgridapitoken') || argv.sendgridapitoken
-  ;
+    ;
 
   let fromDate;
   if (since) {
@@ -86,7 +91,7 @@ async function run() {
 
   const octokit = githubClient.create(token, maxRetries)
     , orgActivity = new OrganizationActivity(octokit)
-  ;
+    ;
 
   console.log(`Attempting to generate organization user activity data, this could take some time...`);
   const userActivity = await orgActivity.getUserActivity(organization, fromDate);
@@ -96,7 +101,7 @@ async function run() {
   console.log(`User activity data captured, generating report...`);
   const data = userActivity.map(activity => activity.jsonPayload)
     , csv = json2csv.parse(data, {})
-  ;
+    ;
 
   const file = path.join(outputDir, 'organization_user_activity.csv');
   fs.writeFileSync(file, csv);
@@ -106,7 +111,7 @@ async function run() {
   core.setOutput('report_csv', file);
 
   const fileHtml = path.join(outputDir, 'organization_user_activity.html');
-  
+
   var html = generateHTML(organization, data);
 
   fs.writeFileSync(fileHtml, html);
@@ -115,7 +120,7 @@ async function run() {
   // Expose the output csv file
   core.setOutput('report_html', fileHtml);
 
-  if(emails) {
+  if (emails) {
     console.log(`Sending email report to ${emails}`);
 
     const msg = {
@@ -124,12 +129,12 @@ async function run() {
       subject: 'GitHub user report',
       html: html,
     };
-  
+
     sgMail.setApiKey(sendgridapitoken);
     sgMail
-        .send(msg)
-        .then(() => console.log('Mail sent successfully'))
-        .catch(error => console.error(error.toString()));
+      .send(msg)
+      .then(() => console.log('Mail sent successfully'))
+      .catch(error => console.error(error.toString()));
   }
 }
 
@@ -144,7 +149,7 @@ execute();
 
 
 function getRequiredInput(name) {
-  return core.getInput(name, {required: true});
+  return core.getInput(name, { required: true });
 }
 
 function saveIntermediateData(directory, data) {
