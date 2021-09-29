@@ -11,12 +11,13 @@ const fs = require('fs')
   , minimist = require('minimist')
   , sgMail = require('@sendgrid/mail')
   , htmlTemplate = require('./src/email')
+  , formateDate = require('date-fns/format')
   ;
 
 var argv = minimist(process.argv.slice(2));
 
 function generateHTML(organization, data) {
-  var html = "<h3>User report for " + organization + "</h3><p></p><table border='1' cellpadding='0' cellspacing='0' style='border-collapse: separate; mso-table-lspace: 0pt; mso-table-rspace: 0pt; width: 100%;'>";
+  var html = "<h3>User report for " + organization + "</h3><p>Created on " + formateDate(new Date(), 'dd MMM yyyy')  + "</p><p>Total number of users - " + data.length + "</p><table border='1' cellpadding='0' cellspacing='0' style='border-collapse: separate; mso-table-lspace: 0pt; mso-table-rspace: 0pt; width: 100%;'>";
   html += "<tr>";
   html += "<th>Login</th>";
   html += "<th>Email</th>";
@@ -48,7 +49,8 @@ function generateHTML(organization, data) {
     // html += "<td>" + current.prComments + "</td>";
     html += "</tr>";
   }
-  return htmlTemplate.emailTemplate.replace("{BODY}", html);
+  var result = htmlTemplate.emailTemplate.replace("{BODY}", html);
+  return result;
 }
 
 async function run() {
@@ -111,7 +113,7 @@ async function run() {
     const msg = {
       to: emails,
       from: from,
-      subject: 'GitHub user report',
+      subject: 'GitHub user report - ' + formateDate(new Date(), 'dd MMM yyyy'),
       html: html,
     };
 

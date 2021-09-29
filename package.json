@@ -1,6 +1,6 @@
 {
     "name": "inactive-users-action",
-    "version": "1.8.0",
+    "version": "1.9.0",
     "description": "GitHub Action for getting inactive organization members",
     "main": "index.js",
     "scripts": {
@@ -22,6 +22,7 @@
         "@octokit/plugin-throttling": "^3.3.3",
         "@octokit/rest": "^18.0.9",
         "@sendgrid/mail": "^7.4.6",
+        "date-fns": "^2.24.0",
         "json2csv": "^5.0.4",
         "minimist": "^1.2.5"
     },
