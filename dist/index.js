@@ -128,7 +128,7 @@ async function run() {
     const msg = {
       to: emails,
       from: from,
-      subject: 'GitHub user report - ' + formateDate(new Date(), 'dd MMM yyyy'),
+      subject: 'GitHub user report - ' + formateDate(new Date(), 'dd MMM yyyy') + ', ' + data.length + ' devs',
       html: html,
     };
 
