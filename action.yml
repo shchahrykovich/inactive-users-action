@@ -34,7 +34,7 @@ inputs:
     description: Emails to send report to
     required: false
 
-  sendgridtoken:
+  sendgridapitoken:
     description: Send Grid API token
     required: false
 
