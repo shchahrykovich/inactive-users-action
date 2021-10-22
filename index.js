@@ -50,6 +50,7 @@ function generateHTML(organization, data) {
     html += "</tr>";
   }
   var result = htmlTemplate.emailTemplate.replace("{BODY}", html);
+  result = result.replace("{PREVIEW}", "Total number of users - " + data.length);
   return result;
 }
 
