@@ -32,7 +32,7 @@ The GitHub Action will register the following outputs that can be referenced in 
 ## New version
 npm run build
 git commit -m 'New build'
-git tag 1.21
+git tag 1.22
 git push origin --tags
 
 ## Examples
