@@ -1,6 +1,6 @@
 const semver = require('semver');
 var getLatestTag = require('git-latest-tag');
-const { exec } = require("child_process");
+const { execSync } = require("child_process");
 
 getLatestTag(true, function(err, currentTag) {
     console.log(`Current tag: ${currentTag}`)
@@ -10,18 +10,17 @@ getLatestTag(true, function(err, currentTag) {
         return;
     }
 
-    const nextTag = semver.inc(currentTag, 'minor');
-    console.log(`Next tag: ${nextTag}`)
+    let nextTag = semver.inc(currentTag, 'minor');
+    var attempts = 10;
+    do {
+        try {
+            console.log(`Next tag: ${nextTag}`)
+            execSync("git tag " + nextTag);
+            return;
+        } catch (e) {
 
-    exec("git tag " + nextTag, (error, stdout, stderr) => {
-        if (error) {
-            console.log(`error: ${error.message}`);
-            return;
         }
-        if (stderr) {
-            console.log(`stderr: ${stderr}`);
-            return;
-        }
-        console.log(`stdout: ${stdout}`);
-    });
+        nextTag = semver.inc(nextTag, 'minor');
+        attempts--;
+    } while (0 < attempts);
 });
