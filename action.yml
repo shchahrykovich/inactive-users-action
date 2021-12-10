@@ -42,6 +42,10 @@ inputs:
     description: From field for email
     required: false
 
+  user_data:
+    description: json with user's data
+    required: false
+
 runs:
   using: node12
   main: dist/index.js

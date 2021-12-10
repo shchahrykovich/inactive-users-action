@@ -4,3 +4,4 @@ node_modules
 *.iml
 run.sh
 /report
+users.json
