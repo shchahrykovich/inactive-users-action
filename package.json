@@ -5,6 +5,7 @@
     "main": "index.js",
     "scripts": {
         "build": "ncc build index.js",
+        "create-next-tag": "node ./scripts/create-next-tag.js",
         "test": "mocha ./src/**/*.test.js"
     },
     "keywords": [
@@ -29,6 +30,8 @@
     "devDependencies": {
         "@vercel/ncc": "^0.25.1",
         "chai": "^4.2.0",
-        "mocha": "^8.2.1"
+        "git-latest-tag": "0.0.6",
+        "mocha": "^8.2.1",
+        "semver": "^7.3.5"
     }
 }
