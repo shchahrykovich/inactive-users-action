@@ -2,15 +2,7 @@ const semver = require('semver');
 var getLatestTag = require('git-latest-tag');
 const { exec } = require("child_process");
 
-var options = {
-    all: 'ok',
-    contains: true,
-    candidates: 10,
-    'commit-ish': 'HEAD'
-};
-
-getLatestTag(options, function(err, tag) {
-    var currentTag = tag.replace('tags/', '');
+getLatestTag(true, function(err, currentTag) {
     console.log(`Current tag: ${currentTag}`)
 
     if (!semver.valid(currentTag)) {
