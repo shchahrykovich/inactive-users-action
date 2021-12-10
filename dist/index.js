@@ -98,10 +98,11 @@ async function run() {
     }
 
     if (user_data) {
-        const userDataStats = await fs.statSync(user_data)
+        const fullPathToUserData = path.join(process.env.GITHUB_WORKSPACE, user_data)
+        const userDataStats = await fs.statSync(fullPathToUserData);
         console.log(`${user_data} is file - ${userDataStats.isFile()}`);
         if (userDataStats.isFile()) {
-            const buffer = fs.readFileSync(user_data);
+            const buffer = fs.readFileSync(fullPathToUserData);
             const fileContent = buffer.toString();
             userStorage = JSON.parse(fileContent);
         }
