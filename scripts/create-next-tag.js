@@ -13,6 +13,11 @@ getLatestTag(options, function(err, tag) {
     var currentTag = tag.replace('tags/', '');
     console.log(`Current tag: ${currentTag}`)
 
+    if (!semver.valid(currentTag)) {
+        console.log('version is not valid');
+        return;
+    }
+
     const nextTag = semver.inc(currentTag, 'minor');
     console.log(`Next tag: ${nextTag}`)
 
